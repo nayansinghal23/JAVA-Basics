@@ -1,0 +1,38 @@
+package SOLID.Example4.BetterCode;
+
+import SOLID.Example4.BetterCode.InternationalPayment.InternationalPaymentCompatibleCreditCard;
+import SOLID.Example4.BetterCode.InternationalPayment.InternationalPaymentStrategy;
+
+public class VisaCreditCard extends CreditCard implements RefundCompatibleCreditCard, InternationalPaymentCompatibleCreditCard {
+    private InternationalPaymentStrategy intlPaymentStrategy;
+
+    public VisaCreditCard(String cardNumber, String cardHolder, String expiryDate, int cvv, InternationalPaymentStrategy intlPaymentStrategy) {
+        super(cardNumber, cardHolder, expiryDate, cvv);
+        this.intlPaymentStrategy = intlPaymentStrategy;
+    }
+
+    @Override
+    public void swipeAndPay() {
+        System.out.println("Swipe and pay with Visa card");
+    }
+    
+    @Override
+    public void doRefund() {
+        System.out.println("Do refund with Visa card");
+    }
+
+    @Override
+    public void onlinePayment() {
+        System.out.println("Online payment with Visa card");
+    }
+
+    @Override
+    public void tapAndPay() {
+        System.out.println("Tap and pay with Visa card");
+    }
+
+    @Override
+    public void intlPayment() {
+        this.intlPaymentStrategy.intlPayment();
+    }
+}
