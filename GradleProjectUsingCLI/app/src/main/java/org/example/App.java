@@ -3,13 +3,24 @@
  */
 package org.example;
 
+import java.io.IOException;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
-
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
-        System.out.println("NAYAN SINGHAL");
+        // This liberary helps us to make HTTP requests
+        OkHttpClient client = new OkHttpClient();
+        String url = "https://jsonplaceholder.typicode.com/todos/1";
+        Request request = new Request.Builder().url(url).build();
+
+        try(Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                System.out.println("Request failed with status code: " + response.code());
+            }
+            System.out.println("Response: " + response.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
