@@ -24,6 +24,8 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
     implementation("com.squareup.okhttp3:okhttp:5.3.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

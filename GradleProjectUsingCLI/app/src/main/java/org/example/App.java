@@ -7,19 +7,36 @@ import java.io.IOException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 public class App {
     public static void main(String[] args) {
-        // This liberary helps us to make HTTP requests
-        OkHttpClient client = new OkHttpClient();
-        String url = "https://jsonplaceholder.typicode.com/todos/1";
-        Request request = new Request.Builder().url(url).build();
+        /*
+            // This liberary helps us to make HTTP requests
+            OkHttpClient client = new OkHttpClient();
+            String url = "https://jsonplaceholder.typicode.com/todos/1";
+            Request request = new Request.Builder().url(url).build();
 
-        try(Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                System.out.println("Request failed with status code: " + response.code());
+            try(Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    System.out.println("Request failed with status code: " + response.code());
+                }
+                System.out.println("Response: " + response.body().string());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            System.out.println("Response: " + response.body().string());
-        } catch (IOException e) {
+        */
+       
+       // Retrofit is a class from which API interfaces are turned into callable objects. Convertors like Gson are used to serialize and deserialize the request and response.
+       Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl("https://jsonplaceholder.typicode.com/")
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+        TodoService todoService = retrofit.create(TodoService.class);
+        try {
+            Todo todo = todoService.getTodoById("1").execute().body();
+            System.out.println(todo.getTitle());
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
