@@ -39,7 +39,7 @@ public class CardReadingState implements State {
     }
 
     @Override
-    public int dispenseCash(int transactionId) {
+    public int dispenseCash(Card card, int amount, int transactionId) {
         throw new IllegalStateException("Cannot dispense cash in CardReadingState");
     }
 
@@ -49,12 +49,23 @@ public class CardReadingState implements State {
     }
 
     @Override
-    public boolean readCashWithdrawDetails(int transactionId, int amount) {
+    public boolean readCashWithdrawDetails(Card card, int transactionId, int amount) {
         throw new IllegalStateException("Cannot read cash withdrawal details in CardReadingState");
     }
 
     @Override
     public ATMState getState() {
         return ATMState.READ_CARD_DETAILS_AND_PIN;
+    }
+
+    @Override
+    public boolean cancelTransaction(int transactionId) {
+        try {
+            this.atm.changeATMState(new ReadyForTransaction(atm));
+            return true;
+        } catch (Exception e) {
+            System.out.println("Failed to cancel transaction " + e);
+            return false;
+        }
     }
 }

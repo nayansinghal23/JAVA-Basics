@@ -2,6 +2,7 @@ package ATMMachine.apis;
 
 import java.util.UUID;
 
+import ATMMachine.DTO.ATMAmountDTO;
 import ATMMachine.DTO.CreateTransactionDTO;
 import ATMMachine.DTO.UpdateATMStateDTO;
 
@@ -29,5 +30,16 @@ public class ATMBackendAPI implements BackendAPI {
         
         // API Call to update ATM state.
         return true;
+    }
+
+    @Override
+    public int getATMAmount(ATMAmountDTO atmAmountDTO) {
+        String atmId = atmAmountDTO.getAtmId();
+
+        if(atmId == null || atmId.isEmpty()) {
+            throw new IllegalArgumentException("ATM ID cannot be null or empty");
+        }
+
+        return 10000;
     }
 }

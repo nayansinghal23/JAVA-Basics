@@ -10,7 +10,7 @@ public class DebitCardManagerService implements CardManagerService {
     }
 
     @Override
-    public boolean validateWithdrawal(Card card, double amount) {
+    public boolean validateWithdrawal(int transactionId, double amount) {
         // API call to validate withdrawal.
         return false;
     }

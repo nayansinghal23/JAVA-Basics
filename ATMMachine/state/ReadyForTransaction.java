@@ -37,7 +37,7 @@ public class ReadyForTransaction implements State {
     }
 
     @Override
-    public int dispenseCash(int transactionId) {
+    public int dispenseCash(Card card, int amount, int transactionId) {
         throw new IllegalStateException("Cannot dispense cash in ReadyForTransaction state");
     }
 
@@ -47,8 +47,13 @@ public class ReadyForTransaction implements State {
     }
 
     @Override
-    public boolean readCashWithdrawDetails(int transactionId, int amount) {
+    public boolean readCashWithdrawDetails(Card card, int transactionId, int amount) {
         throw new IllegalStateException("Cannot read cash withdrawal details in ReadyForTransaction state");
+    }
+
+    @Override
+    public boolean cancelTransaction(int transactionId) {
+        throw new IllegalStateException("Cannot cancel transaction in ReadyForTransaction state");
     }
 
     @Override
