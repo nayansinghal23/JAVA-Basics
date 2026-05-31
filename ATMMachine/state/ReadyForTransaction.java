@@ -1,5 +1,6 @@
 package ATMMachine.state;
 
+import ATMMachine.DTO.CreateTransactionDTO;
 import ATMMachine.apis.BackendAPI;
 import ATMMachine.enums.ATMState;
 import ATMMachine.models.ATM;
@@ -18,7 +19,8 @@ public class ReadyForTransaction implements State {
     public int initTransaction() {
         // Check for ATM state to be in READY_FOR_TRANSACTION.
         // Generate transaction id.
-        int transactionId = this.backendAPI.generateTransactionId(this.atm.getAtmId());
+        CreateTransactionDTO createTransactionDTO = new CreateTransactionDTO(this.atm.getAtmId());
+        int transactionId = this.backendAPI.generateTransactionId(createTransactionDTO);
         if(transactionId <= 0) {
             throw new IllegalStateException("Failed to generate transaction id");
         }

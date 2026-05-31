@@ -1,5 +1,7 @@
 package ATMMachine.apis;
 
+import ATMMachine.DTO.CreateTransactionDTO;
+
 public interface BackendAPI {
-    int generateTransactionId(String atmId);
+    int generateTransactionId(CreateTransactionDTO createTransactionDTO);
 }
