@@ -1,13 +1,15 @@
 package ATMMachine.models;
 
+import ATMMachine.enums.CardType;
+
 public class Card {
     private final long cardNumber;
     private final int pin;
     private final String cardHolderName;
-    private final String cardType;
+    private final CardType cardType;
     private final String bankName;
 
-    public Card(long cardNumber, int pin, String cardHolderName, String cardType, String bankName) {
+    public Card(long cardNumber, int pin, String cardHolderName, CardType cardType, String bankName) {
         this.cardNumber = cardNumber;
         this.pin = pin;
         this.cardHolderName = cardHolderName;
@@ -27,7 +29,7 @@ public class Card {
         return this.cardHolderName;
     }
 
-    public String getCardType() {
+    public CardType getCardType() {
         return this.cardType;
     }
     
