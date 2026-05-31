@@ -1,6 +1,7 @@
 package ATMMachine.state;
 
 import ATMMachine.DTO.CreateTransactionDTO;
+import ATMMachine.apis.ATMBackendAPI;
 import ATMMachine.apis.BackendAPI;
 import ATMMachine.enums.ATMState;
 import ATMMachine.models.ATM;
@@ -10,9 +11,9 @@ public class ReadyForTransaction implements State {
     private final ATM atm;
     private final BackendAPI backendAPI;
 
-    public ReadyForTransaction(ATM atm, BackendAPI backendAPI) {
+    public ReadyForTransaction(ATM atm) {
         this.atm = atm;
-        this.backendAPI = backendAPI;
+        this.backendAPI = new ATMBackendAPI();
     }
 
     @Override
@@ -26,7 +27,7 @@ public class ReadyForTransaction implements State {
         }
 
         // Set the state to READ_CARD_DETAILS_AND_PIN.
-        this.atm.changeATMState(new CardReadingState());
+        this.atm.changeATMState(new CardReadingState(this.atm));
         return transactionId;
     }
 

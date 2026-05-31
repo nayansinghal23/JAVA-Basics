@@ -15,7 +15,7 @@ public class ATM {
     public ATM(String atmId) {
         this.atmId = atmId;
         this.backendAPI = new ATMBackendAPI();
-        this.state = new ReadyForTransaction(this, this.backendAPI);
+        this.state = new ReadyForTransaction(this);
     }
 
     public String getAtmId() {
