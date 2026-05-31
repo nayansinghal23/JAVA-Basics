@@ -41,7 +41,7 @@ public class ReadingCashWithdrawalDetailsState implements State {
             this.atm.changeATMState(new DispensingCashState(this.atm));
         }
         else {
-            this.atm.changeATMState(new ReadyForTransaction(this.atm));
+            this.atm.changeATMState(new EjectingCardState(this.atm));
         }
         return isValid;
     }

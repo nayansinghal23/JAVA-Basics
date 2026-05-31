@@ -31,13 +31,14 @@ public class DispensingCashState implements State {
     public int dispenseCash(Card card, int amount, int transactionId) {
         CardManagerService manager = CardManagerFactory.getCardManagerService(card.getCardType());
         boolean isTransactionSuccessful = manager.doTransaction(card, amount, transactionId);
+        if(isTransactionSuccessful) {
+            this.cashDispenserService.dispenseCash(this.atm, amount);
+        }
+        this.atm.changeATMState(new EjectingCardState(this.atm));
         if(!isTransactionSuccessful) {
-            this.atm.changeATMState(new ReadyForTransaction(this.atm));
             throw new RuntimeException("Transaction failed");
         }
 
-        this.cashDispenserService.dispenseCash(this.atm, transactionId);
-        this.atm.changeATMState(new EjectingCardState(this.atm));
         return amount;
     }
 

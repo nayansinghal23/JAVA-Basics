@@ -33,7 +33,7 @@ public class CardReadingState implements State {
         this.atm.changeATMState(new ReadingCashWithdrawalDetailsState(this.atm));
        }
        else {
-        this.atm.changeATMState(new ReadyForTransaction(this.atm));
+        this.atm.changeATMState(new EjectingCardState(this.atm));
        }
         return isValid;
     }
