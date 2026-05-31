@@ -26,6 +26,7 @@ public class ReadyForTransaction implements State {
         }
 
         // Set the state to READ_CARD_DETAILS_AND_PIN.
+        this.atm.changeATMState(new CardReadingState());
         return transactionId;
     }
 
