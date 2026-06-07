@@ -1,0 +1,5 @@
+package BuilderDesignPattern.HTTPRequestBuilder;
+
+public enum HTTPMethods {
+    GET, POST, PUT, PATCH, DELETE
+}
