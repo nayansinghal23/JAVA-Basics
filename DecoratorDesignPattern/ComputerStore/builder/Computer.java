@@ -6,7 +6,7 @@ import DecoratorDesignPattern.ComputerStore.enums.ComputerType;
 import DecoratorDesignPattern.ComputerStore.enums.Additionals;
 import DecoratorDesignPattern.ComputerStore.enums.FamilyType;
 
-public class Computer {
+public class Computer implements ComputerComponent {
     private final ComputerType computerType;
     private final FamilyType familyType;
     private final List<Additionals> additionals;
