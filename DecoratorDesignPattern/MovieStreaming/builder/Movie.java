@@ -1,5 +1,6 @@
 package DecoratorDesignPattern.MovieStreaming.builder;
 
+import DecoratorDesignPattern.MovieStreaming.analytics.AnalyticService;
 import DecoratorDesignPattern.MovieStreaming.enums.Plans;
 import DecoratorDesignPattern.MovieStreaming.enums.Providers;
 import DecoratorDesignPattern.MovieStreaming.registry.ContentProviderRegistry;
@@ -12,7 +13,10 @@ public class Movie implements MovieInterface {
     public Movie(MovieBuilder builder) {
         this.provider = builder.getProvider();
         this.plan = builder.getPlan();
-        this.contentProviderRegistry = ContentProviderRegistry.getInstance();
+        contentProviderRegistry = ContentProviderRegistry.getInstance();
+        // Singleton pattern for AnalyticService
+        AnalyticService analyticService = AnalyticService.getInstance();
+        analyticService.recordSubscription(provider);
     }
 
     @Override
