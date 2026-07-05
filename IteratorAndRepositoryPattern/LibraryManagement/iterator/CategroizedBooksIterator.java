@@ -1,0 +1,36 @@
+package iterator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import book.Book;
+import enums.BookCategory;
+import repositry.BooksRepositry;
+
+public class CategroizedBooksIterator implements Iterator<Book> {
+    private final BooksRepositry booksRepositry;
+    private int offset = 1;
+    private int limit = 10;
+    private BookCategory category;
+    private List<Book> books = new ArrayList<>();
+
+    public CategroizedBooksIterator(BooksRepositry booksRepositry, int offset, int limit, BookCategory category) {
+        this.booksRepositry = booksRepositry;
+        this.offset = offset;
+        this.limit = limit;
+        this.books = booksRepositry.getBooksByCategory(category, limit, offset);
+    }
+
+    @Override
+    public boolean hasNext() {
+        return !books.isEmpty();
+    }
+
+    @Override
+    public List<Book> next() {
+        List<Book> currentBooks = books;
+        offset += limit;
+        books = booksRepositry.getBooksByCategory(category, limit, offset);
+        return currentBooks;
+    }
+}
