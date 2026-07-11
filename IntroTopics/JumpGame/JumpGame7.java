@@ -6,35 +6,35 @@ import java.util.Queue;
 public class JumpGame7 {
     public boolean canReach(String s, int minJump, int maxJump) {
         int n = s.length();
-        if(s.charAt(n - 1) == '1') return false;
+        // If the last character is '1', it's impossible to land on it.
+        if (s.charAt(n - 1) == '1') return false;
         
+        // Tracks the first index that has NOT been scanned yet
         int farthestScanned = 1;
-        boolean[] visited = new boolean[n];
-        for(int i = 0; i < n; i++) visited[i] = s.charAt(i) == '1' ? true : false;
         Queue<Integer> q = new LinkedList<>();
-        visited[0] = true;
         q.offer(0);
-        while(q.size() > 0) {
-            int size = q.size();
-            while(size-- > 0) {
-                int i = q.poll();
-                if(i == n - 1) return true;
-
-                int start = Math.max(i + minJump, farthestScanned), end = Math.min(i + maxJump, s.length() - 1);
-                for(int idx = start; idx <= end; idx++) {
-                    if(s.charAt(idx) == '0' && !visited[idx]) {
-                        q.offer(idx);
-                        visited[idx] = true;
-                    }
+        
+        while (!q.isEmpty()) {
+            int i = q.poll();
+            
+            // If we reached the end, we are done!
+            if (i == n - 1) return true;
+            
+            // Start scanning from either (i + minJump) OR where we last left off
+            int start = Math.max(i + minJump, farthestScanned);
+            int end = Math.min(i + maxJump, n - 1);
+            
+            for (int idx = start; idx <= end; idx++) {
+                if (s.charAt(idx) == '0') {
+                    q.offer(idx);
                 }
-                farthestScanned = Math.max(farthestScanned, end + 1); // prevents an index from being checked multiple times.
             }
+            
+            // Crucial: Update farthestScanned so the next elements in the queue 
+            // completely skip this window, preventing duplicate checks.
+            farthestScanned = Math.max(farthestScanned, end + 1);
         }
+        
         return false;
     }
 }
-
-/*
-Without visited → MLE.
-Without farthestScanned → TLE.
-*/
