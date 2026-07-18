@@ -1,29 +1,34 @@
 public class TaskSchedular {
     // https://leetcode.com/problems/task-scheduler/description/
 
-    // Explaination : https://leetcode.com/problems/task-scheduler/solutions/104500/java-on-time-o1-space-1-pass-no-sorting-jw4qz
+    // Explaination : https://youtu.be/rYh-Kkbzsnw?si=2RNbRKHcVNqN_ikT
 
     public int leastInterval(char[] tasks, int n) {
-        int[] counter = new int[26];
-        int max = 0;
-        int maxCount = 0;
-        for(char task : tasks) {
-            counter[task - 'A']++;
-            if(max == counter[task - 'A']) {
-                maxCount++;
-            }
-            else if(max < counter[task - 'A']) {
-                max = counter[task - 'A'];
-                maxCount = 1;
-            }
+        int[] freq = new int[26];
+        for(char ch : tasks) freq[ch - 'A']++;
+        int time = 0;
+        PriorityQueue<Integer> pq = new PriorityQueue<>(
+            (a, b) -> Integer.compare(b, a)
+        );
+        for(int i = 0; i < 26; i++) {
+            if(freq[i] > 0) pq.offer(freq[i]);
         }
-        
-        int partCount = max - 1; // The number of gaps between the most frequent tasks. If A appears 3 times, there are 2 gaps.
-        int partLength = n - (maxCount - 1); // The size of each gap. If multiple tasks share the maximum frequency (e.g., both A and B appear 3 times), they sit right next to each other (A B ... A B ... A B), which reduces the actual empty space left in each gap.
-        int emptySlots = partCount * partLength;
-        int availableTasks = tasks.length - max * maxCount;
-        int idles = Math.max(0, emptySlots - availableTasks);
-        
-        return tasks.length + idles;
+        while(!pq.isEmpty()) {
+            List<Integer> list = new ArrayList<>();
+            for(int i = 1; i <= n + 1; i++) {
+                if(pq.isEmpty()) break;
+
+                int frequency = pq.poll();
+                frequency--;
+                list.add(frequency);
+            }
+
+            for(int frequency : list) {
+                if(frequency > 0) pq.offer(frequency);
+            }
+
+            time += pq.isEmpty() ? list.size() : n + 1;
+        }
+        return time;
     }
 }
