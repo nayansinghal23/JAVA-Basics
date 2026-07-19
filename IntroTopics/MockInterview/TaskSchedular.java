@@ -31,4 +31,22 @@ public class TaskSchedular {
         }
         return time;
     }
+    
+    // https://leetcode.com/problems/task-scheduler-ii/
+    public long taskSchedulerII(int[] tasks, int space) {
+        int n = tasks.length;
+        if(n == 0) return 0;
+        if(n == 1) return 1;
+
+        long ans = 1;
+        Map<Integer, Long> map = new HashMap<>();
+        map.put(tasks[0], ans);
+        for(int i = 1; i < n; i++) {
+            if(map.containsKey(tasks[i]) && map.get(tasks[i]) + space >= ans) ans = map.get(tasks[i]) + space + 1;
+            else ans++;
+
+            map.put(tasks[i], ans);
+        }
+        return ans;
+    }
 }
