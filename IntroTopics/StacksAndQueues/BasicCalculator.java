@@ -33,3 +33,96 @@ public class BasicCalculator {
         return res;
     }
 }
+
+
+public class BasicCalculator2 {
+    // https://leetcode.com/problems/basic-calculator-ii/
+
+    public int calculate(String s) {
+        int res = 0, n = 0;
+        Stack<Integer> st = new Stack<>();
+        s += '+';
+        char op = '+';
+        for(int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if(c == ' ') continue;
+
+            if(Character.isDigit(c)) {
+                n = n * 10 + (c - '0');
+                continue;
+            }
+
+            if(op == '+') st.push(n);
+            else if(op == '-') st.push(-n);
+            else if(op == '*') st.push(st.pop() * n);
+            else if(op == '/') st.push(st.pop() / n);
+
+            op = c;
+            n = 0;
+        }
+        while(!st.isEmpty()) res += st.pop();
+        return res;
+    }
+}
+
+public class BasicCalculator3 {
+    // https://www.lintcode.com/problem/849/
+
+    int idx = 0;
+
+    public int calculate(String s) {
+        idx = 0;
+        return helper(s);
+    }
+
+    private int helper(String s) {
+        Stack<Integer> st = new Stack<>();
+        int num = 0;
+        char sign = '+';
+
+        while (idx < s.length()) {
+            char c = s.charAt(idx);
+
+            if (Character.isDigit(c)) {
+                num = num * 10 + (c - '0');
+            }
+
+            if (c == '(') {
+                idx++;
+                num = helper(s);
+            }
+
+            if ((!Character.isDigit(c) && c != ' ') || idx == s.length() - 1) {
+
+                switch (sign) {
+                    case '+':
+                        st.push(num);
+                        break;
+                    case '-':
+                        st.push(-num);
+                        break;
+                    case '*':
+                        st.push(st.pop() * num);
+                        break;
+                    case '/':
+                        st.push(st.pop() / num);
+                        break;
+                }
+
+                if (c == ')')
+                    break;
+
+                sign = c;
+                num = 0;
+            }
+
+            idx++;
+        }
+
+        int ans = 0;
+        while (!st.isEmpty())
+            ans += st.pop();
+
+        return ans;
+    }
+}
