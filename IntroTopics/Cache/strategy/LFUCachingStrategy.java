@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LFUCachingStrategy implements CachingStrategy {
-    Map<Integer, Node> keyMap = new HashMap<>();
-    Map<Integer, DLL> freqMap = new HashMap<>();
+    Map<Integer, LFUNode> keyMap = new HashMap<>();
+    Map<Integer, LFUDLL> freqMap = new HashMap<>();
 
     private final int capacity;
     private int minFreq;
@@ -18,7 +18,7 @@ public class LFUCachingStrategy implements CachingStrategy {
     public int get(int key) {
         if(!keyMap.containsKey(key)) return -1;
         
-        Node node = keyMap.get(key);
+        LFUNode node = keyMap.get(key);
         update(node);
         return node.value;
     }
@@ -28,28 +28,28 @@ public class LFUCachingStrategy implements CachingStrategy {
         if(capacity == 0) return;
 
         if(keyMap.containsKey(key)) {
-            Node node = keyMap.get(key);
+            LFUNode node = keyMap.get(key);
             node.value = value;
             update(node);
             return;
         }
 
         if(keyMap.size() == capacity) {
-            DLL list = freqMap.get(minFreq);
-            Node removed = list.removeLast();
+            LFUDLL list = freqMap.get(minFreq);
+            LFUNode removed = list.removeLast();
             keyMap.remove(removed.key);
         }
 
-        Node node = new Node(key,value);
+        LFUNode node = new LFUNode(key,value);
         keyMap.put(key,node);
         minFreq = 1;
-        freqMap.putIfAbsent(1, new DLL());
+        freqMap.putIfAbsent(1, new LFUDLL());
         freqMap.get(1).add(node);
     }
 
-    private void update(Node node) {
+    private void update(LFUNode node) {
         int freq = node.freq;
-        DLL list = freqMap.get(freq);
+        LFUDLL list = freqMap.get(freq);
 
         list.remove(node);
 
@@ -58,33 +58,33 @@ public class LFUCachingStrategy implements CachingStrategy {
         }
 
         node.freq++;
-        freqMap.putIfAbsent(node.freq, new DLL());
+        freqMap.putIfAbsent(node.freq, new LFUDLL());
         freqMap.get(node.freq).add(node);
     }
 }
 
-class Node {
+class LFUNode {
     int key, value, freq;
-    Node prev, next;
+    LFUNode prev, next;
 
-    Node(int k, int v) {
+    LFUNode(int k, int v) {
         key = k;
         value = v;
         freq = 1;
     }
 }
 
-class DLL {
-    Node head = new Node(0,0);
-    Node tail = new Node(0,0);
+class LFUDLL {
+    LFUNode head = new LFUNode(0,0);
+    LFUNode tail = new LFUNode(0,0);
     int size = 0;
 
-    DLL() {
+    LFUDLL() {
         head.next = tail;
         tail.prev = head;
     }
 
-    void add(Node node) {
+    void add(LFUNode node) {
         node.prev = head;
         node.next = head.next;
         head.next.prev = node;
@@ -92,15 +92,15 @@ class DLL {
         size++;
     }
 
-    void remove(Node node) {
+    void remove(LFUNode node) {
         node.prev.next = node.next;
         node.next.prev = node.prev;
         size--;
     }
 
-    Node removeLast() {
+    LFUNode removeLast() {
         if(size > 0) {
-            Node node = tail.prev;
+            LFUNode node = tail.prev;
             remove(node);
             return node;
         }
