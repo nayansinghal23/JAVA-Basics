@@ -11,6 +11,8 @@ public class LFUCachingStrategy implements CachingStrategy {
     private int minFreq;
 
     public LFUCachingStrategy(int capacity) {
+        if(capacity <= 0) throw new IllegalArgumentException("Capacity should be greater than 0.");
+
         this.capacity = capacity;
     }
 
