@@ -1,6 +1,6 @@
 package strategy;
 
-public interface CachingStrategy {
-    int get(int key);
-    void put(int key, int value);
+public interface CachingStrategy<K, V> {
+    V get(K key);
+    void put(K key, V value);
 }
