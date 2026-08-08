@@ -3,6 +3,8 @@ package strategy;
 import java.util.HashMap;
 import java.util.Map;
 
+import repository.Repository;
+
 public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V> {
     private final Map<K, Node<K, V>> keyMap = new HashMap<>();
     private final Map<Integer, DoublyLinkedList<K, V>> freqMap = new HashMap<>();
@@ -10,8 +12,12 @@ public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V> {
     private final int capacity;
     private int minFreq;
 
-    public LFUCachingStrategy(int capacity) {
+    private final Repository repository;
+
+    public LFUCachingStrategy(int capacity, Repository repository) {
         if (capacity <= 0) throw new IllegalArgumentException("Capacity should be greater than 0.");
+
+        this.repository = repository;
         this.capacity = capacity;
     }
 
@@ -21,6 +27,7 @@ public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V> {
 
         Node<K, V> node = keyMap.get(key);
         update(node);
+        repository.storeToDisk();
         return node.value;
     }
 
@@ -32,6 +39,7 @@ public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V> {
             Node<K, V> node = keyMap.get(key);
             node.value = value;
             update(node);
+            repository.storeToDisk();
             return;
         }
 
@@ -46,6 +54,7 @@ public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V> {
         minFreq = 1;
         freqMap.putIfAbsent(1, new DoublyLinkedList<>());
         freqMap.get(1).addFirst(node);
+        repository.storeToDisk();
     }
 
     private void update(Node<K, V> node) {

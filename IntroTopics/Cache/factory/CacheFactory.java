@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import enums.EvictionPolicy;
+import repository.Repository;
 import strategy.CachingStrategy;
 import strategy.LFUCachingStrategy;
 import strategy.LRUCachingStrategy;
@@ -11,8 +12,8 @@ import strategy.LRUCachingStrategy;
 public class CacheFactory<K, V> {
     private final Map<EvictionPolicy, CachingStrategy<K, V>> cacheRegistry = new HashMap<>();
 
-    public CacheFactory(int capacity) {
-        seedCacheRegistry(capacity);
+    public CacheFactory(int capacity, Repository repository) {
+        seedCacheRegistry(capacity, repository);
     }
 
     public CachingStrategy<K, V> initializeEvictionPolicy(EvictionPolicy evictionPolicy) {
@@ -21,8 +22,8 @@ public class CacheFactory<K, V> {
         return strategy;
     }
 
-    private void seedCacheRegistry(int capacity) {
-        cacheRegistry.put(EvictionPolicy.LRU, new LRUCachingStrategy<>(capacity));
-        cacheRegistry.put(EvictionPolicy.LFU, new LFUCachingStrategy<>(capacity));
+    private void seedCacheRegistry(int capacity, Repository repository) {
+        cacheRegistry.put(EvictionPolicy.LRU, new LRUCachingStrategy<>(capacity, repository));
+        cacheRegistry.put(EvictionPolicy.LFU, new LFUCachingStrategy<>(capacity, repository));
     }
 }
