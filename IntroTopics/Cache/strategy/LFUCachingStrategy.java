@@ -1,25 +1,29 @@
+package strategy;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class LFU {
+public class LFUCachingStrategy implements CachingStrategy {
     Map<Integer, Node> keyMap = new HashMap<>();
     Map<Integer, DLL> freqMap = new HashMap<>();
 
     private final int capacity;
     private int minFreq;
 
-    public LFU(int capacity) {
+    public LFUCachingStrategy(int capacity) {
         this.capacity = capacity;
     }
 
+    @Override
     public int get(int key) {
         if(!keyMap.containsKey(key)) return -1;
-
+        
         Node node = keyMap.get(key);
         update(node);
         return node.value;
     }
-
+    
+    @Override
     public void put(int key, int value) {
         if(capacity == 0) return;
 

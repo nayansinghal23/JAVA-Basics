@@ -1,13 +1,15 @@
+package strategy;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class LRU {
+public class LRUCachingStrategy implements CachingStrategy {
     private int capacity;
     private DLL head;
     private DLL tail;
     private Map<Integer, DLL> map;
 
-    public LRU(int capacity) {
+    public LRUCachingStrategy(int capacity) {
         if(capacity <= 0) throw new IllegalArgumentException("Capacity should be greater than 0.");
 
         this.capacity = capacity;
@@ -34,15 +36,17 @@ public class LRU {
         front.prev = node;
     }
 
+    @Override
     public int get(int key) {
         DLL node = map.get(key);
         if(node == null) return -1;
-
+        
         deleteFromDLL(node);
         insertAfterHead(node);
         return node.value;
     }
-
+    
+    @Override
     public void put(int key, int value) {
         DLL node = map.get(key);
         if(node != null) {
