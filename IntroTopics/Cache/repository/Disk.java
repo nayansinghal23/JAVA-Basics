@@ -1,9 +1,13 @@
 package repository;
 
-public class Disk implements Repository {
+import java.util.Map;
+
+public class Disk<K, V> implements Repository<K, V> {
+    @Override
+    public void saveAll(Map<K, V> data) {}
 
     @Override
-    public void storeToDisk() {
-        System.out.println("Storing cached data to disk");
+    public Map<K, V> loadAll() {
+        return null;
     }
 }

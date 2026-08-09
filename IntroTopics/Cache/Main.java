@@ -6,7 +6,7 @@ import strategy.CachingStrategy;
 
 public class Main {
     public static void main(String[] args) {
-        Repository disk = new Disk();
+        Repository<Integer, Integer> disk = new Disk<>();
         CachingStrategy<Integer, Integer> cache = CacheFacade.createCache(EvictionPolicy.LRU, disk, 2);
 
         cache.put(1, 1);

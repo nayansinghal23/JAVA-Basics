@@ -1,5 +1,8 @@
 package repository;
 
-public interface Repository {
-    void storeToDisk();
+import java.util.Map;
+
+public interface Repository<K, V> {
+    void saveAll(Map<K, V> data);
+    Map<K, V> loadAll();
 }

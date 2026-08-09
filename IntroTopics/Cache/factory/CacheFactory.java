@@ -12,7 +12,7 @@ import strategy.LRUCachingStrategy;
 public class CacheFactory<K, V> {
     private final Map<EvictionPolicy, CachingStrategy<K, V>> cacheRegistry = new HashMap<>();
 
-    public CacheFactory(int capacity, Repository repository) {
+    public CacheFactory(int capacity, Repository<K, V> repository) {
         seedCacheRegistry(capacity, repository);
     }
 
@@ -22,7 +22,7 @@ public class CacheFactory<K, V> {
         return strategy;
     }
 
-    private void seedCacheRegistry(int capacity, Repository repository) {
+    private void seedCacheRegistry(int capacity, Repository<K, V> repository) {
         cacheRegistry.put(EvictionPolicy.LRU, new LRUCachingStrategy<>(capacity, repository));
         cacheRegistry.put(EvictionPolicy.LFU, new LFUCachingStrategy<>(capacity, repository));
     }
