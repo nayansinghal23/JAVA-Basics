@@ -19,6 +19,30 @@ public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V> {
 
         this.repository = repository;
         this.capacity = capacity;
+
+        loadFromRepository();
+    }
+
+    private void loadFromRepository() {
+        int loaded = 0;
+        for (Map.Entry<K, V> entry : repository.loadAll().entrySet()) {
+            if (loaded == capacity) break;
+
+            Node<K, V> node = new Node<>(entry.getKey(), entry.getValue());
+            keyMap.put(entry.getKey(), node);
+            freqMap.putIfAbsent(1, new DoublyLinkedList<>());
+            freqMap.get(1).addFirst(node);
+            loaded++;
+        }
+        if (!keyMap.isEmpty()) minFreq = 1;
+    }
+
+    private void persist() {
+        Map<K, V> snapshot = new HashMap<>();
+        for (Map.Entry<K, Node<K, V>> entry : keyMap.entrySet()) {
+            snapshot.put(entry.getKey(), entry.getValue().value);
+        }
+        repository.saveAll(snapshot);
     }
 
     @Override
@@ -38,6 +62,7 @@ public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V> {
             Node<K, V> node = keyMap.get(key);
             node.value = value;
             update(node);
+            persist();
             return;
         }
 
@@ -52,6 +77,7 @@ public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V> {
         minFreq = 1;
         freqMap.putIfAbsent(1, new DoublyLinkedList<>());
         freqMap.get(1).addFirst(node);
+        persist();
     }
 
     private void update(Node<K, V> node) {

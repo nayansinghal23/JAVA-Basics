@@ -17,6 +17,28 @@ public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V> {
 
         this.repository = repository;
         this.capacity = capacity;
+
+        loadFromRepository();
+    }
+
+    private void loadFromRepository() {
+        int loaded = 0;
+        for (Map.Entry<K, V> entry : repository.loadAll().entrySet()) {
+            if (loaded == capacity) break;
+
+            Node<K, V> node = new Node<>(entry.getKey(), entry.getValue());
+            map.put(entry.getKey(), node);
+            list.addFirst(node);
+            loaded++;
+        }
+    }
+
+    private void persist() {
+        Map<K, V> snapshot = new HashMap<>();
+        for (Map.Entry<K, Node<K, V>> entry : map.entrySet()) {
+            snapshot.put(entry.getKey(), entry.getValue().value);
+        }
+        repository.saveAll(snapshot);
     }
 
     @Override
@@ -36,6 +58,7 @@ public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V> {
             node.value = value;
             list.remove(node);
             list.addFirst(node);
+            persist();
             return;
         }
 
@@ -47,5 +70,6 @@ public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V> {
         Node<K, V> newNode = new Node<>(key, value);
         map.put(key, newNode);
         list.addFirst(newNode);
+        persist();
     }
 }
