@@ -3,42 +3,14 @@ package strategy;
 import java.util.HashMap;
 import java.util.Map;
 
-import repository.Repository;
-
-public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V> {
+public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V>, Snapshotable<K, V> {
     private final int capacity;
     private final Map<K, Node<K, V>> map = new HashMap<>();
     private final DoublyLinkedList<K, V> list = new DoublyLinkedList<>();
 
-    private final Repository<K, V> repository;
-
-    public LRUCachingStrategy(int capacity, Repository<K, V> repository) {
+    public LRUCachingStrategy(int capacity) {
         if (capacity <= 0) throw new IllegalArgumentException("Capacity should be greater than 0.");
-
-        this.repository = repository;
         this.capacity = capacity;
-
-        loadFromRepository();
-    }
-
-    private void loadFromRepository() {
-        int loaded = 0;
-        for (Map.Entry<K, V> entry : repository.loadAll().entrySet()) {
-            if (loaded == capacity) break;
-
-            Node<K, V> node = new Node<>(entry.getKey(), entry.getValue());
-            map.put(entry.getKey(), node);
-            list.addFirst(node);
-            loaded++;
-        }
-    }
-
-    private void persist() {
-        Map<K, V> snapshot = new HashMap<>();
-        for (Map.Entry<K, Node<K, V>> entry : map.entrySet()) {
-            snapshot.put(entry.getKey(), entry.getValue().value);
-        }
-        repository.saveAll(snapshot);
     }
 
     @Override
@@ -58,7 +30,6 @@ public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V> {
             node.value = value;
             list.remove(node);
             list.addFirst(node);
-            persist();
             return;
         }
 
@@ -70,6 +41,10 @@ public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V> {
         Node<K, V> newNode = new Node<>(key, value);
         map.put(key, newNode);
         list.addFirst(newNode);
-        persist();
+    }
+
+    @Override
+    public Map<K, V> snapshot() {
+        return Node.toValueMap(map);
     }
 }

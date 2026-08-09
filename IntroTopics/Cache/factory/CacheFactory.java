@@ -2,18 +2,20 @@ package factory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import enums.EvictionPolicy;
 import repository.Repository;
 import strategy.CachingStrategy;
 import strategy.LFUCachingStrategy;
 import strategy.LRUCachingStrategy;
+import strategy.PersistentCachingStrategy;
 
 public class CacheFactory<K, V> {
     private final Map<EvictionPolicy, CachingStrategy<K, V>> cacheRegistry = new HashMap<>();
 
-    public CacheFactory(int capacity, Repository<K, V> repository) {
-        seedCacheRegistry(capacity, repository);
+    public CacheFactory(int capacity, Function<EvictionPolicy, Repository<K, V>> repositoryProvider) {
+        seedCacheRegistry(capacity, repositoryProvider);
     }
 
     public CachingStrategy<K, V> initializeEvictionPolicy(EvictionPolicy evictionPolicy) {
@@ -22,8 +24,11 @@ public class CacheFactory<K, V> {
         return strategy;
     }
 
-    private void seedCacheRegistry(int capacity, Repository<K, V> repository) {
-        cacheRegistry.put(EvictionPolicy.LRU, new LRUCachingStrategy<>(capacity, repository));
-        cacheRegistry.put(EvictionPolicy.LFU, new LFUCachingStrategy<>(capacity, repository));
+    private void seedCacheRegistry(int capacity, Function<EvictionPolicy, Repository<K, V>> repositoryProvider) {
+        LRUCachingStrategy<K, V> lru = new LRUCachingStrategy<>(capacity);
+        cacheRegistry.put(EvictionPolicy.LRU, new PersistentCachingStrategy<>(lru, lru, repositoryProvider.apply(EvictionPolicy.LRU)));
+
+        LFUCachingStrategy<K, V> lfu = new LFUCachingStrategy<>(capacity);
+        cacheRegistry.put(EvictionPolicy.LFU, new PersistentCachingStrategy<>(lfu, lfu, repositoryProvider.apply(EvictionPolicy.LFU)));
     }
 }

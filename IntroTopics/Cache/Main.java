@@ -1,13 +1,11 @@
 import enums.EvictionPolicy;
 import facade.CacheFacade;
 import repository.Disk;
-import repository.Repository;
 import strategy.CachingStrategy;
 
 public class Main {
     public static void main(String[] args) {
-        Repository<Integer, Integer> disk = new Disk<>();
-        CachingStrategy<Integer, Integer> cache = CacheFacade.createCache(EvictionPolicy.LRU, disk, 2);
+        CachingStrategy<Integer, Integer> cache = CacheFacade.createCache(EvictionPolicy.LRU, policy -> new Disk<>(), 2);
 
         cache.put(1, 1);
         cache.put(2, 2);
