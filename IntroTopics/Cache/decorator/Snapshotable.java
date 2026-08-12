@@ -1,4 +1,4 @@
-package strategy;
+package decorator;
 
 import java.util.Map;
 

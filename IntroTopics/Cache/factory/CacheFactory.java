@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import decorator.PersistentCachingStrategy;
 import enums.EvictionPolicy;
 import repository.Repository;
 import strategy.CachingStrategy;
 import strategy.LFUCachingStrategy;
 import strategy.LRUCachingStrategy;
-import strategy.PersistentCachingStrategy;
 
 public class CacheFactory<K, V> {
     private final Map<EvictionPolicy, CachingStrategy<K, V>> cacheRegistry = new HashMap<>();

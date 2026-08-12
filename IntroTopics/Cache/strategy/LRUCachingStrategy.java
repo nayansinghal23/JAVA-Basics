@@ -3,6 +3,8 @@ package strategy;
 import java.util.HashMap;
 import java.util.Map;
 
+import decorator.Snapshotable;
+
 public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V>, Snapshotable<K, V> {
     private final int capacity;
     private final Map<K, Node<K, V>> map = new HashMap<>();

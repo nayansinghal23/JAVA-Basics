@@ -3,6 +3,8 @@ package strategy;
 import java.util.HashMap;
 import java.util.Map;
 
+import decorator.Snapshotable;
+
 public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V>, Snapshotable<K, V> {
     private final Map<K, Node<K, V>> keyMap = new HashMap<>();
     private final Map<Integer, DoublyLinkedList<K, V>> freqMap = new HashMap<>();

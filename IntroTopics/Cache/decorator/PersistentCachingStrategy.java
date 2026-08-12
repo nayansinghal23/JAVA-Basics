@@ -1,8 +1,9 @@
-package strategy;
+package decorator;
 
 import java.util.Map;
 
 import repository.Repository;
+import strategy.CachingStrategy;
 
 public class PersistentCachingStrategy<K, V> implements CachingStrategy<K, V> {
     private final CachingStrategy<K, V> delegate;
