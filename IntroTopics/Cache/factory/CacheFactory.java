@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import decorator.PersistentCachingStrategy;
+import decorator.TTLCachingStrategy;
 import enums.EvictionPolicy;
 import repository.Repository;
 import strategy.CachingStrategy;
@@ -12,6 +13,8 @@ import strategy.LFUCachingStrategy;
 import strategy.LRUCachingStrategy;
 
 public class CacheFactory<K, V> {
+    private static final int DEFAULT_TTL_SECONDS = 5 * 60;
+
     private final Map<EvictionPolicy, CachingStrategy<K, V>> cacheRegistry = new HashMap<>();
 
     public CacheFactory(int capacity, Function<EvictionPolicy, Repository<K, V>> repositoryProvider) {
@@ -26,9 +29,11 @@ public class CacheFactory<K, V> {
 
     private void seedCacheRegistry(int capacity, Function<EvictionPolicy, Repository<K, V>> repositoryProvider) {
         LRUCachingStrategy<K, V> lru = new LRUCachingStrategy<>(capacity);
-        cacheRegistry.put(EvictionPolicy.LRU, new PersistentCachingStrategy<>(lru, lru, repositoryProvider.apply(EvictionPolicy.LRU)));
+        CachingStrategy<K, V> lruWithTtl = new TTLCachingStrategy<>(lru, lru, DEFAULT_TTL_SECONDS);
+        cacheRegistry.put(EvictionPolicy.LRU, new PersistentCachingStrategy<>(lruWithTtl, lru, repositoryProvider.apply(EvictionPolicy.LRU)));
 
         LFUCachingStrategy<K, V> lfu = new LFUCachingStrategy<>(capacity);
-        cacheRegistry.put(EvictionPolicy.LFU, new PersistentCachingStrategy<>(lfu, lfu, repositoryProvider.apply(EvictionPolicy.LFU)));
+        CachingStrategy<K, V> lfuWithTtl = new TTLCachingStrategy<>(lfu, lfu, DEFAULT_TTL_SECONDS);
+        cacheRegistry.put(EvictionPolicy.LFU, new PersistentCachingStrategy<>(lfuWithTtl, lfu, repositoryProvider.apply(EvictionPolicy.LFU)));
     }
 }
