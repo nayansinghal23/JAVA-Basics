@@ -3,9 +3,10 @@ package strategy;
 import java.util.HashMap;
 import java.util.Map;
 
+import decorator.Expiration;
 import decorator.Snapshotable;
 
-public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V>, Snapshotable<K, V> {
+public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V>, Snapshotable<K, V>, Expiration<K, V> {
     private final Map<K, Node<K, V>> keyMap = new HashMap<>();
     private final Map<Integer, DoublyLinkedList<K, V>> freqMap = new HashMap<>();
 
@@ -68,5 +69,17 @@ public class LFUCachingStrategy<K, V> implements CachingStrategy<K, V>, Snapshot
     @Override
     public Map<K, V> snapshot() {
         return Node.toValueMap(keyMap);
+    }
+
+    @Override
+    public void expire(K key) {
+        Node<K, V> node = keyMap.get(key);
+        if(node == null) return;
+
+        keyMap.remove(key);
+        DoublyLinkedList<K, V> list = freqMap.getOrDefault(node.freq, new DoublyLinkedList<>());
+        list.remove(node);
+
+        if(minFreq == node.freq && list.size() == 0) minFreq++;
     }
 }

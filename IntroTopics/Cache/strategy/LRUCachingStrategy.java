@@ -3,9 +3,10 @@ package strategy;
 import java.util.HashMap;
 import java.util.Map;
 
+import decorator.Expiration;
 import decorator.Snapshotable;
 
-public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V>, Snapshotable<K, V> {
+public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V>, Snapshotable<K, V>, Expiration<K, V> {
     private final int capacity;
     private final Map<K, Node<K, V>> map = new HashMap<>();
     private final DoublyLinkedList<K, V> list = new DoublyLinkedList<>();
@@ -48,5 +49,13 @@ public class LRUCachingStrategy<K, V> implements CachingStrategy<K, V>, Snapshot
     @Override
     public Map<K, V> snapshot() {
         return Node.toValueMap(map);
+    }
+
+    @Override
+    public void expire(K key) {
+        Node<K, V> node = map.get(key);
+        if(node == null) return;
+        list.remove(node);
+        map.remove(key);
     }
 }
